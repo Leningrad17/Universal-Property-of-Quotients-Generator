@@ -73,6 +73,7 @@ assert CompOfBijectiveisBijective {
 
 check CompOfBijectiveisBijective for 4 A, 4 B, 4 C
 
+
 //Produces relations on a set which are reflexive
 pred IsReflexive[X: set univ, f: X -> X] {
 	all x : X | (x -> x) in f 
@@ -100,6 +101,9 @@ pred Main {
 run Main for exactly 2 A, 0 B, 0 C
 
 	
+
+
+
 
 
 
