@@ -74,6 +74,38 @@ assert CompOfBijectiveisBijective {
 check CompOfBijectiveisBijective for 4 A, 4 B, 4 C
 
 
+//Produces relations on a set which are reflexive
+pred IsReflexive[X: set univ, f: X -> X] {
+	all x : X | (x -> x) in f 
+}
+
+//Produces relations on a set which are symmetric
+pred IsSymmetric[X : set univ, f: X -> X] {
+	all x : X | all y : X | (x-> y) in f implies (y -> x) in f 
+}
+
+//Produces relations on a set which are transitive
+pred IsTransitive [X: set univ, f: X -> X] {
+	all x : X | all y : X | all z : X | (x -> y) in f and (y -> z) in f implies (x -> z) in f
+}
+
+//Produces equivalence relations on a set
+pred IsEquivalence[X: set univ, f : X -> X]{
+	IsReflexive[X,f] and IsSymmetric[X,f] and IsTransitive[X,f]
+}
+
+pred Main {
+	some f: A -> A | IsEquivalence[A,f] }
+
+
+run Main for exactly 2 A, 0 B, 0 C
+
+	
+
+
+
+
+
 
 
 
