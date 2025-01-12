@@ -1,4 +1,4 @@
-
+open util/integer
 //Arbitrarily defined sets
 sig A, B, C {}
 
@@ -73,7 +73,6 @@ assert CompOfBijectiveisBijective {
 
 check CompOfBijectiveisBijective for 4 A, 4 B, 4 C
 
-
 //Produces relations on a set which are reflexive
 pred IsReflexive[X: set univ, f: X -> X] {
 	all x : X | (x -> x) in f 
@@ -83,6 +82,7 @@ pred IsReflexive[X: set univ, f: X -> X] {
 pred IsSymmetric[X : set univ, f: X -> X] {
 	all x : X | all y : X | (x-> y) in f implies (y -> x) in f 
 }
+
 
 //Produces relations on a set which are transitive
 pred IsTransitive [X: set univ, f: X -> X] {
@@ -94,16 +94,54 @@ pred IsEquivalence[X: set univ, f : X -> X]{
 	IsReflexive[X,f] and IsSymmetric[X,f] and IsTransitive[X,f]
 }
 
-pred Main {
-	some f: A -> A | IsEquivalence[A,f] }
+//Maps elements from different equivalence classes to each other. Used to calculate the number of
+//equivalence classes for a given equivalence relation
+pred IsNotEquivalence[X : set univ, f: X -> X, g : X -> X] {
+	IsEquivalence[X,f] and all x1, x2 : X | (x1 -> x2) in g iff (x1 -> x2) not in f and (x2 -> x1) not in g
+}
 
+//Calculates the size of the equivalence class with representative x 
+fun EquivalenceClassSize[X : set univ, f: X -> X, x : X] : Int {
+	#(x.*f) }
 
-run Main for exactly 2 A, 0 B, 0 C
+//Produces functions which are invariant to the equivalence defined on the domain
+pred IsInvariant[X,Y : set univ, f : X -> X, g : X -> Y] {
+	IsEquivalence[X,f] and IsFunction[X,Y,g] and all x1, x2 : X | (x1 -> x2) in f implies (x1.g = x2.g)
+}
 
+//Produces surjective function which maps each element of the set endowed with an equivalence
+//relation to its respective equivalence class in the quotient set
+pred IsQuotientMap [X, Y : set univ, f : X -> X, g : X -> Y, h : X -> X] {
+	IsNotEquivalence[X,f,h] and IsFunction[X,Y,g] and IsSurjective[X,Y,g] and all x1, x2 : X | (x1 -> x2) in f implies (x1.g = x2.g)
+}
+
+//Calculates the number of different equivalence classes of an equivalence relation
+fun EquivalenceClassPartitions[X: set univ, f: X -> X, g : X-> X] : Int {
+	#g }
+
+//Produces as many elements of the quotient set as there are equivalence classes for a sharper image
+pred QuotientSetEqualsEquivalenceClasses [X,Y:set univ, f : X -> X, g : X -> X] {
+	IsNotEquivalence[X,f,g] and lt[#f, mul[#X,#X]] implies #Y = EquivalenceClassPartitions[X,f,g] else #Y = 1
+}
+
+//Produces the quotient map without excess elements of the quotient set
+pred TrueQuotientMapRepresentation [X,Y : set univ, f : X -> X, g : X -> Y, h : X -> X] {
+	IsQuotientMap[X,Y,f,g,h] and QuotientSetEqualsEquivalenceClasses[X,Y,f,h]
+}
 	
 
 
 
+
+
+
+
+
+
+
+
+
+	
 
 
 
