@@ -94,10 +94,17 @@ pred IsEquivalence[X: set univ, f : X -> X]{
 	IsReflexive[X,f] and IsSymmetric[X,f] and IsTransitive[X,f]
 }
 
+//Defines a mapping between the distinct equivalence classes of a set such that each equivalence class maps to 
+//another equivalence class exactly once; the purpose of this is to calculate the number of distinct equivalence 
+//classes, where the cardinality of g is exactly that number. 
+pred EquivClassMap[X : set univ, f : X -> X, g : X -> X] {
+	(all x : X | one x2 : x.*f | one x3 : X - x.*f | x2.g = x3 and #(x.*f <: g) = 1) or ((some x : X | #X = #x.*f) implies one x : X | g = x -> x)
+}
+
 //Maps elements from different equivalence classes to each other. Used to calculate the number of
 //equivalence classes for a given equivalence relation
-pred IsNotEquivalence[X,Y : set univ, f: X -> X, g : X -> X] {
-	IsEquivalence[X,f] and all x1, x2 : X | (x1 -> x2) in g iff (x1 -> x2) not in f and ((x2 -> x1)  in g iff #f = 2 and #Y = 2)
+pred IsNotEquivalence[X,Y: set univ, f: X -> X, g : X -> X] {
+	IsEquivalence[X,f] and EquivClassMap[X,f,g]
 }
 
 //Calculates the size of the equivalence class with representative x 
@@ -121,7 +128,7 @@ fun EquivalenceClassPartitions[X: set univ, f: X -> X, g : X-> X] : Int {
 
 //Produces as many elements of the quotient set as there are equivalence classes for a sharper image
 pred QuotientSetEqualsEquivalenceClasses [X,Y:set univ, f : X -> X, g : X -> X] {
-	IsNotEquivalence[X,Y,f,g] and lt[#f, mul[#X,#X]] implies #Y = EquivalenceClassPartitions[X,f,g] else #Y = 1
+	(IsNotEquivalence[X,Y,f,g] and some x : X | lt[EquivalenceClassSize[X,f,x],#X]) implies #Y = EquivalenceClassPartitions[X,f,g] else #Y = 1
 }
 
 //Produces the quotient map without excess elements of the quotient set
@@ -148,13 +155,23 @@ pred UniversalPropertyGeneratorOnlyImage {
 	some f, i: A -> A | some g : A -> Q |  some h : A -> C | some j : Q -> C | UniversalPropertyGeneratorFunction[A,Q,C,f,i,g,h,j] and #Q = #C
 }
 
+
+//Asserts that the function between our quotient set and the image of our invariant function is a bijection
+assert UniversalPropertyFunctionWithImageIsBijective {
+	all f, i: A -> A | all g : A -> Q |  all h : A -> C | all j : Q -> C | (UniversalPropertyGeneratorFunction[A,Q,C,f,i,g,h,j] and #Q = #C) implies IsBijective[Q,C,j]
+}
+
+
+
 	
 
 
 
 
+run UniversalPropertyGenerator for 3 A, 3 Q, 3 C, 10 Int
+run UniversalPropertyGeneratorOnlyImage for exactly 4 A,  4 Q, 4 C, 10 Int
+check UniversalPropertyFunctionWithImageIsBijective for 3 A, 3 Q, 3 C, 10 Int
 
-run UniversalPropertyGeneratorOnlyImage for 3 A,  3 Q, 3 C, 10 Int
 
 	
 
