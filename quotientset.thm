@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<alloy>
+
+<view>
+
+<defaultnode/>
+
+<defaultedge/>
+
+<node>
+   <type name="Int"/>
+   <type name="String"/>
+   <type name="univ"/>
+   <type name="seq/Int"/>
+</node>
+
+<node shape="Egg">
+   <type name="A"/>
+</node>
+
+<node shape="Triangle" color="Blue">
+   <type name="C"/>
+</node>
+
+<node style="Bold" shape="Diamond" color="Green">
+   <type name="Q"/>
+</node>
+
+<edge visible="no">
+   <relation name="$UniversalPropertyGenerator_i"> <type name="A"/> <type name="A"/> </relation>
+</edge>
+
+</view>
+
+</alloy>
