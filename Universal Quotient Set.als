@@ -33,7 +33,7 @@ pred IsFunction[X,Y: set univ, f: X -> Y] {
 
 //Checks that the composition of two functions is a function
 assert CompOfFunctionisFunction {
-	all f : A -> B | all g : B -> C | (IsFunction[A,B,f] and IsFunction[B,C,g]) implies IsFunction[A,C,f.g]
+	all f : A -> Q | all g : Q -> C | (IsFunction[A,Q,f] and IsFunction[Q,C,g]) implies IsFunction[A,C,f.g]
 }
 
 check CompOfFunctionisFunction for 4 A, 4 B, 4 C
@@ -104,6 +104,10 @@ pred IsNotEquivalence[X : set univ, f: X -> X, g : X -> X] {
 fun EquivalenceClassSize[X : set univ, f: X -> X, x : X] : Int {
 	#(x.*f) }
 
+//Calculates the number of different equivalence classes of an equivalence relation
+fun EquivalenceClassPartitions[X: set univ, f: X -> X, g : X-> X] : Int {
+	#g }
+
 //Produces functions which are invariant to the equivalence defined on the domain
 pred IsInvariant[X,Y : set univ, f : X -> X, g : X -> Y] {
 	IsEquivalence[X,f] and IsFunction[X,Y,g] and all x1, x2 : X | (x1 -> x2) in f implies (x1.g = x2.g)
@@ -115,9 +119,6 @@ pred IsQuotientMap [X, Y : set univ, f : X -> X, g : X -> Y, h : X -> X] {
 	IsNotEquivalence[X,f,h] and IsFunction[X,Y,g] and IsSurjective[X,Y,g] and all x1, x2 : X | (x1 -> x2) in f implies (x1.g = x2.g)
 }
 
-//Calculates the number of different equivalence classes of an equivalence relation
-fun EquivalenceClassPartitions[X: set univ, f: X -> X, g : X-> X] : Int {
-	#g }
 
 //Produces as many elements of the quotient set as there are equivalence classes for a sharper image
 pred QuotientSetEqualsEquivalenceClasses [X,Y:set univ, f : X -> X, g : X -> X] {
@@ -130,13 +131,14 @@ pred TrueQuotientMapRepresentation [X,Y : set univ, f : X -> X, g : X -> Y, h : 
 }
 	
 
+//Produces the commutative diagram representing the universal property of the quotient set
+pred UniversalPropertyGenerator {
+	some f, i: A -> A | some g : A -> Q |  some h : A -> C | some j : Q -> C | IsInvariant[A,C,f,h] and TrueQuotientMapRepresentation[A,Q,f,g, i] and all a : A | a.h = a.g.j     
+}
 
 
-
-
-
-
-
+	
+run UniversalPropertyGenerator for 3 A, 3 Q, 3 C, 10 Int
 
 
 
