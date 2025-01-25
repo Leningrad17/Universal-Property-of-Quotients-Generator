@@ -33,7 +33,7 @@ pred IsFunction[X,Y: set univ, f: X -> Y] {
 
 //Checks that the composition of two functions is a function
 assert CompOfFunctionisFunction {
-	all f : A -> Q | all g : Q -> C | (IsFunction[A,Q,f] and IsFunction[Q,C,g]) implies IsFunction[Q,C,f.g]
+	all f : A -> Q | all g : Q -> C | (IsFunction[A,Q,f] and IsFunction[Q,C,g]) implies IsFunction[A,C,f.g]
 }
 
 check CompOfFunctionisFunction for 4 A, 4 Q, 4 C
@@ -111,6 +111,10 @@ pred IsNotEquivalence[X,Y: set univ, f: X -> X, g : X -> X] {
 fun EquivalenceClassSize[X : set univ, f: X -> X, x : X] : Int {
 	#(x.*f) }
 
+//Calculates the number of different equivalence classes of an equivalence relation
+fun EquivalenceClassPartitions[X: set univ, f: X -> X, g : X-> X] : Int {
+	#g }
+
 //Produces functions which are invariant to the equivalence defined on the domain
 pred IsInvariant[X,Y : set univ, f : X -> X, g : X -> Y] {
 	IsEquivalence[X,f] and IsFunction[X,Y,g] and all x1, x2 : X | (x1 -> x2) in f implies (x1.g = x2.g)
@@ -122,9 +126,6 @@ pred IsQuotientMap [X, Y : set univ, f : X -> X, g : X -> Y, h : X -> X] {
 	IsNotEquivalence[X,Y,f,h] and IsFunction[X,Y,g] and IsSurjective[X,Y,g] and all x1, x2 : X | (x1 -> x2) in f iff (x1.g = x2.g)
 }
 
-//Calculates the number of different equivalence classes of an equivalence relation
-fun EquivalenceClassPartitions[X: set univ, f: X -> X, g : X-> X] : Int {
-	#g }
 
 //Produces as many elements of the quotient set as there are equivalence classes for a sharper image
 pred QuotientSetEqualsEquivalenceClasses [X,Y:set univ, f : X -> X, g : X -> X] {
@@ -136,30 +137,15 @@ pred TrueQuotientMapRepresentation [X,Y : set univ, f : X -> X, g : X -> Y, h : 
 	IsQuotientMap[X,Y,f,g,h] and QuotientSetEqualsEquivalenceClasses[X,Y,f,h]
 }
 
-
 //Produces the commutative diagram representing the universal property of the quotient set
 pred UniversalPropertyGenerator {
 	some f, i: A -> A | some g : A -> Q |  some h : A -> C | some j : Q -> C | IsInvariant[A,C,f,h] and TrueQuotientMapRepresentation[A,Q,f,g, i] and IsInjective[Q,C,j] and all a : A | a.h = a.g.j     
 }
 
 
+	
+run UniversalPropertyGenerator for 3 A, 3 Q, 3 C, 10 Int
 
-//Uses the previous predicate, but formats it to be used by the next predicate
-pred UniversalPropertyGeneratorFunction[X,Y,Z : set univ, f : X -> X, i : X -> X, g : X -> Y, h : X -> Z, j : Y -> Z] {
-	IsInvariant[X,Z,f,h] and TrueQuotientMapRepresentation[X,Y,f,g,i] and IsInjective[Y,Z,j] and all x : X | x.h = x.g.j
-}
-
-//Produces the commutative diagram representing the universal property of the quotient set, but only produces the
-// atoms that are elements of the image of the invariant function
-pred UniversalPropertyGeneratorOnlyImage {
-	some f, i: A -> A | some g : A -> Q |  some h : A -> C | some j : Q -> C | UniversalPropertyGeneratorFunction[A,Q,C,f,i,g,h,j] and #Q = #C
-}
-
-
-//Asserts that the function between our quotient set and the image of our invariant function is a bijection
-assert UniversalPropertyFunctionWithImageIsBijective {
-	all f, i: A -> A | all g : A -> Q |  all h : A -> C | all j : Q -> C | (UniversalPropertyGeneratorFunction[A,Q,C,f,i,g,h,j] and #Q = #C) implies IsBijective[Q,C,j]
-}
 
 
 
@@ -167,10 +153,6 @@ assert UniversalPropertyFunctionWithImageIsBijective {
 
 
 
-
-run UniversalPropertyGenerator for 3 A, 3 Q, 3 C, 10 Int
-run UniversalPropertyGeneratorOnlyImage for exactly 4 A,  4 Q, 4 C, 10 Int
-check UniversalPropertyFunctionWithImageIsBijective for 3 A, 3 Q, 3 C, 10 Int
 
 
 	
