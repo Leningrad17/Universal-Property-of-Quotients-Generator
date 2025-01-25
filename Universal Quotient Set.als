@@ -139,18 +139,11 @@ pred TrueQuotientMapRepresentation [X,Y : set univ, f : X -> X, g : X -> Y, h : 
 
 //Produces the commutative diagram representing the universal property of the quotient set
 pred UniversalPropertyGenerator {
-	some f, i: A -> A | some g : A -> Q |  some h : A -> C | some j : Q -> C | IsInvariant[A,C,f,h] and TrueQuotientMapRepresentation[A,Q,f,g, i] and IsInjective[Q,C,j] and all a : A | a.h = a.g.j     
+	some f, i: A -> A | some g : A -> Q |  some h : A -> C | some j : Q -> C | IsInvariant[A,C,f,h] and TrueQuotientMapRepresentation[A,Q,f,g, i] and all a : A | a.h = a.g.j     
 }
-
 
 	
 run UniversalPropertyGenerator for 3 A, 3 Q, 3 C, 10 Int
-
-
-
-
-	
-
 
 
 
